@@ -12,7 +12,7 @@ LGPL
 
 #define MODULE_NAME "magic"
 #define MODULE_VERSION "0.1"
-#define MAGIC_META "magic"
+#define LUA_MAGIC_META "magic"
 
 struct magic_constmap {
 	const char *name;
@@ -63,9 +63,42 @@ static int Ptodo(lua_State *L)
 	return 0;
 }
 
+static int Popen(lua_State *L)
+{
+	magic_t *h;
+	int flags = luaL_optinteger(L, 1, MAGIC_NONE);
+
+	h = lua_newuserdata(L, sizeof(magic_t));
+	luaL_getmetatable(L, LUA_MAGIC_META);
+	lua_setmetatable(L, -2);
+	*h = magic_open(flags);
+	if (*h == NULL)
+		luaL_error(L, "magic_open failed");
+	return 1;
+}
+
+static magic_t Pmagic_checkarg(lua_State *L, int index)
+{
+	magic_t *m;
+	luaL_checktype(L, index, LUA_TUSERDATA);
+	m = (magic_t *) luaL_checkudata(L, index, LUA_MAGIC_META);
+	if (m == NULL)
+		luaL_typerror(L, index, LUA_MAGIC_META);
+	return *m;
+}
+
+static int Pclose(lua_State *L)
+{
+	magic_t m = Pmagic_checkarg(L, 1);
+	if (m)
+		magic_close(m);
+	m = NULL;
+	return 0;
+}
+
 static const luaL_reg Pmagic_methods[] = {
-	{"open",	Ptodo},
-	{"close",	Ptodo},
+	{"open",	Popen},
+	{"close",	Pclose},
 	{"getpath",	Ptodo},
 	{"file",	Ptodo},
 	{"descriptor",	Ptodo},
@@ -81,7 +114,7 @@ static const luaL_reg Pmagic_methods[] = {
 };
 
 static const luaL_reg Pmeta_methods[] = {
-	{"__gc",	Ptodo},
+	{"__gc",	Pclose},
 	{NULL,		NULL},
 };
 
@@ -94,6 +127,16 @@ LUALIB_API int luaopen_magic(lua_State *L)
 
 	init_consts(L);
 
+	luaL_newmetatable(L, LUA_MAGIC_META);
+	luaL_register(L, NULL, Pmeta_methods);
+	lua_pushliteral(L, "__index");
+	lua_pushvalue(L, -3);
+	lua_rawset(L, -3);
+	lua_pushliteral(L, "__metatable");
+	lua_pushvalue(L, -3);
+	lua_rawset(L, -3);
+	lua_pop(L, 1);
 
+	return 1;
 }
 
