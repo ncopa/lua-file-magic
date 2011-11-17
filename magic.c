@@ -96,14 +96,30 @@ static int Pclose(lua_State *L)
 	return 0;
 }
 
+static int Pfile(lua_State *L)
+{
+	magic_t m = Pmagic_checkarg(L, 1);
+	const char *filename = luaL_checkstring(L, 2);
+
+	lua_pushstring(L, magic_file(m, filename));
+	return 1;
+}
+
+static int Perror(lua_State *L)
+{
+	magic_t m = Pmagic_checkarg(L, 1);
+	lua_pushstring(L, magic_error(m));
+	return 1;
+}
+
 static const luaL_reg Pmagic_methods[] = {
 	{"open",	Popen},
 	{"close",	Pclose},
 	{"getpath",	Ptodo},
-	{"file",	Ptodo},
+	{"file",	Pfile},
 	{"descriptor",	Ptodo},
 	{"buffer",	Ptodo},
-	{"error",	Ptodo},
+	{"error",	Perror},
 	{"setflags",	Ptodo},
 	{"load",	Ptodo},
 	{"compile",	Ptodo},
