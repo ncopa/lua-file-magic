@@ -112,6 +112,14 @@ static int Perror(lua_State *L)
 	return 1;
 }
 
+static int Pload(lua_State *L)
+{
+	magic_t m = Pmagic_checkarg(L, 1);
+	char *filename = luaL_optstring(L, 2, NULL);
+	lua_pushstring(L, magic_load(m, filename));
+	return 1;
+}
+
 static const luaL_reg Pmagic_methods[] = {
 	{"open",	Popen},
 	{"close",	Pclose},
@@ -121,7 +129,7 @@ static const luaL_reg Pmagic_methods[] = {
 	{"buffer",	Ptodo},
 	{"error",	Perror},
 	{"setflags",	Ptodo},
-	{"load",	Ptodo},
+	{"load",	Pload},
 	{"compile",	Ptodo},
 	{"check",	Ptodo},
 	{"list",	Ptodo},
