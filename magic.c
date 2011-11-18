@@ -168,10 +168,20 @@ static int Pbuffer(lua_State *L)
 	return 1;
 }
 
+static int Pgetpath(lua_State *L)
+{
+	// from file.h in 'file' sources
+	#define FILE_LOAD 0
+	const char *magicfile = luaL_optstring(L, 1, NULL);
+	lua_pushstring(L, magic_getpath(magicfile, FILE_LOAD));
+	return 1;
+	#undef FILE_LOAD
+}
+
 static const luaL_reg Pmagic_methods[] = {
 	{"open",	Popen},
 	{"close",	Pclose},
-	{"getpath",	Ptodo},
+	{"getpath",	Pgetpath},
 	{"file",	Pfile},
 	{"descriptor",	Pdescriptor},
 	{"buffer",	Pbuffer},

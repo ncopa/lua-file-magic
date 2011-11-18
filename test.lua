@@ -25,4 +25,4 @@ print(m:file("Makefile"))
 m:setflags(magic.NONE)
 print(m:buffer("#!/bin/bash\n"))
 
-
+print(magic.getpath())
