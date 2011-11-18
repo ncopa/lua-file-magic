@@ -115,9 +115,29 @@ static int Perror(lua_State *L)
 static int Pload(lua_State *L)
 {
 	magic_t m = Pmagic_checkarg(L, 1);
-	char *filename = luaL_optstring(L, 2, NULL);
-	lua_pushstring(L, magic_load(m, filename));
-	return 1;
+	const char *filename = luaL_optstring(L, 2, NULL);
+	if (magic_load(m, filename)==0) {
+		lua_pushboolean(L,1);
+		return 1;
+	} else {
+		lua_pushnil(L);
+		lua_pushstring(L,  magic_error(m));
+		return 2;
+	}
+}
+
+static int Psetflags(lua_State *L)
+{
+	magic_t m = Pmagic_checkarg(L, 1);
+	int flags = luaL_checknumber(L, 2);
+	if (magic_setflags(m, flags)) {
+		lua_pushboolean(L,1);
+		return 1;
+	} else {
+		lua_pushnil(L);
+		lua_pushstring(L, magic_error(m));
+		return 2;
+	}
 }
 
 static const luaL_reg Pmagic_methods[] = {
@@ -128,7 +148,7 @@ static const luaL_reg Pmagic_methods[] = {
 	{"descriptor",	Ptodo},
 	{"buffer",	Ptodo},
 	{"error",	Perror},
-	{"setflags",	Ptodo},
+	{"setflags",	Psetflags},
 	{"load",	Pload},
 	{"compile",	Ptodo},
 	{"check",	Ptodo},
