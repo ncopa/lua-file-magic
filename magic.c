@@ -59,11 +59,13 @@ static void init_consts(lua_State *L)
 	}
 }
 
+#if 0
 static int Ptodo(lua_State *L)
 {
 	printf("todo\n");
 	return 0;
 }
+#endif
 
 static int Popen(lua_State *L)
 {
@@ -188,9 +190,10 @@ static const luaL_reg Pmagic_methods[] = {
 	{"error",	Perror},
 	{"setflags",	Psetflags},
 	{"load",	Pload},
-	{"compile",	Ptodo},
+/*	{"compile",	Ptodo},
 	{"check",	Ptodo},
 	{"list",	Ptodo},
+*/
 	{"errno",	Perrno},
 	{NULL, 		NULL}
 };
