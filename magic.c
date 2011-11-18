@@ -4,6 +4,8 @@ LGPL
 
 */
 
+#include <string.h>
+
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
@@ -112,6 +114,15 @@ static int Perror(lua_State *L)
 	return 1;
 }
 
+static int Perrno(lua_State *L)
+{
+	magic_t m = Pmagic_checkarg(L, 1);
+	int err = magic_errno(m);
+	lua_pushinteger(L, err);
+	lua_pushstring(L, strerror(err));
+	return 2;
+}
+
 static int Pload(lua_State *L)
 {
 	magic_t m = Pmagic_checkarg(L, 1);
@@ -153,7 +164,7 @@ static const luaL_reg Pmagic_methods[] = {
 	{"compile",	Ptodo},
 	{"check",	Ptodo},
 	{"list",	Ptodo},
-	{"errno",	Ptodo},
+	{"errno",	Perrno},
 	{NULL, 		NULL}
 };
 
