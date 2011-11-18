@@ -151,12 +151,20 @@ static int Psetflags(lua_State *L)
 	}
 }
 
+static int Pdescriptor(lua_State *L)
+{
+	magic_t m = Pmagic_checkarg(L, 1);
+	int fd = luaL_checknumber(L, 2);
+	lua_pushstring(L, magic_descriptor(m, fd));
+	return 1;
+}
+
 static const luaL_reg Pmagic_methods[] = {
 	{"open",	Popen},
 	{"close",	Pclose},
 	{"getpath",	Ptodo},
 	{"file",	Pfile},
-	{"descriptor",	Ptodo},
+	{"descriptor",	Pdescriptor},
 	{"buffer",	Ptodo},
 	{"error",	Perror},
 	{"setflags",	Psetflags},
