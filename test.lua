@@ -22,5 +22,7 @@ m:setflags(magic.MIME_TYPE)
 print(m:error())
 print(m:file("Makefile"))
 
+m:setflags(magic.NONE)
+print(m:buffer("#!/bin/bash\n"))
 
 

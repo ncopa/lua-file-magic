@@ -159,13 +159,22 @@ static int Pdescriptor(lua_State *L)
 	return 1;
 }
 
+static int Pbuffer(lua_State *L)
+{
+	size_t size;
+	magic_t m = Pmagic_checkarg(L, 1);
+	const char *buf = luaL_checklstring(L, 2, &size);
+	lua_pushstring(L, magic_buffer(m, buf, size));
+	return 1;
+}
+
 static const luaL_reg Pmagic_methods[] = {
 	{"open",	Popen},
 	{"close",	Pclose},
 	{"getpath",	Ptodo},
 	{"file",	Pfile},
 	{"descriptor",	Pdescriptor},
-	{"buffer",	Ptodo},
+	{"buffer",	Pbuffer},
 	{"error",	Perror},
 	{"setflags",	Psetflags},
 	{"load",	Pload},
