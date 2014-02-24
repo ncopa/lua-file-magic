@@ -2,7 +2,6 @@
 
 magic = require("magic")
 
-	
 m = magic.open()
 assert(m:load())
 print(m:errno())
