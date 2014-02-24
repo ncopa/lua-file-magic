@@ -15,7 +15,7 @@ LUAPC ?= lua5.2
 LUA_CFLAGS ?= $(shell pkg-config --cflags $(LUAPC))
 
 CFLAGS ?= -g
-CFLAGS += -fPIC $(LUA_CFLAGS)
+CFLAGS += -fPIC $(LUA_CFLAGS) -DMODULE_VERSION=\"$(FULL_VERSION)\"
 
 magic.so: $(OBJS)
 	$(CC) $(LDFLAGS) -o $@ -fPIC -shared $^ $(LIBS)

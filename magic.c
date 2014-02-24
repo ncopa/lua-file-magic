@@ -13,7 +13,9 @@ LGPL
 #include <magic.h>
 
 #define MODULE_NAME "magic"
-#define MODULE_VERSION "0.1"
+#ifndef MODULE_VERSION
+#define MODULE_VERSION "unknown"
+#endif
 #define LUA_MAGIC_META "magic"
 
 #if LUA_VERSION_NUM < 502
