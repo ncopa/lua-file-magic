@@ -16,6 +16,18 @@ LGPL
 #define MODULE_VERSION "0.1"
 #define LUA_MAGIC_META "magic"
 
+#if LUA_VERSION_NUM < 502
+#  define luaL_newlib(L,l) (lua_newtable(L), luaL_register(L,NULL,l))
+#  define luaL_setfuncs(L,l,n) (assert(n==0), luaL_register(L,NULL,l))
+#else
+static int luaL_typerror (lua_State *L, int narg, const char *tname)
+{
+	const char *msg = lua_pushfstring(L, "%s expected, got %s",
+					  tname, luaL_typename(L, narg));
+	return luaL_argerror(L, narg, msg);
+}
+#endif
+
 struct magic_constmap {
 	const char *name;
 	int value;
@@ -180,7 +192,7 @@ static int Pgetpath(lua_State *L)
 	#undef FILE_LOAD
 }
 
-static const luaL_reg Pmagic_methods[] = {
+static const luaL_Reg Pmagic_methods[] = {
 	{"open",	Popen},
 	{"close",	Pclose},
 	{"getpath",	Pgetpath},
@@ -195,17 +207,17 @@ static const luaL_reg Pmagic_methods[] = {
 	{"list",	Ptodo},
 */
 	{"errno",	Perrno},
-	{NULL, 		NULL}
+	{NULL,		NULL}
 };
 
-static const luaL_reg Pmeta_methods[] = {
+static const luaL_Reg Pmeta_methods[] = {
 	{"__gc",	Pclose},
 	{NULL,		NULL},
 };
 
 LUALIB_API int luaopen_magic(lua_State *L)
 {
-	luaL_openlib(L, MODULE_NAME, Pmagic_methods, 0);
+	luaL_newlib(L, Pmagic_methods);
 	lua_pushliteral(L, "version");
 	lua_pushliteral(L, MODULE_VERSION);
 	lua_settable(L, -3);
@@ -213,7 +225,7 @@ LUALIB_API int luaopen_magic(lua_State *L)
 	init_consts(L);
 
 	luaL_newmetatable(L, LUA_MAGIC_META);
-	luaL_register(L, NULL, Pmeta_methods);
+	luaL_setfuncs(L, Pmeta_methods, 0);
 	lua_pushliteral(L, "__index");
 	lua_pushvalue(L, -3);
 	lua_rawset(L, -3);

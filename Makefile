@@ -11,9 +11,11 @@ endif
 
 OBJS = magic.o
 LIBS = -lmagic
+LUAPC ?= lua5.2
+LUA_CFLAGS ?= $(shell pkg-config --cflags $(LUAPC))
 
 CFLAGS ?= -g
-CFLAGS += -fPIC
+CFLAGS += -fPIC $(LUA_CFLAGS)
 
 magic.so: $(OBJS)
 	$(CC) $(LDFLAGS) -o $@ -fPIC -shared $^ $(LIBS)

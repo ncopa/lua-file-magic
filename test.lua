@@ -1,4 +1,4 @@
-#!/usr/bin/lua
+#!/usr/bin/lua5.2
 
 magic = require("magic")
 
@@ -13,7 +13,7 @@ if arg[1] == "--stdin" then
 	print(m:descriptor(0))
 	os.exit(0)
 else
-	os.execute("lua test.lua --stdin < Makefile")
+	os.execute("lua5.2 test.lua --stdin < Makefile")
 end
 
 print(m:file("Makefile"))
